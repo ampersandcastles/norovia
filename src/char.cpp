@@ -15,6 +15,12 @@ enum class CharacterClass {
     // add classes as needed
 };
 
+enum class AttackType {
+    STANDARD,
+    RANGED,
+    // add more if needed, perhaps damage types (fire, ice, nature, poison, etc.)
+};
+
 struct Character {
     std::string name;
     int health;
@@ -23,6 +29,7 @@ struct Character {
     int level;
     int experience;
     CharacterClass characterClass;
+    AttackType attackType;
 
     // constructor for initializing default values
     Character() : health(0), attack(0), defense(0), level(1), experience(0) {}
@@ -31,6 +38,7 @@ struct Character {
     void displayInfo() {
         cout << "Name: " << name << "\n";
         cout << "Class: " << static_cast<int>(characterClass) << "\n";
+        cout << "Attack Type: " << static_cast<int>(attackType) << "\n";
         cout << "Health: " << health << "\n";
         cout << "Attack: " << attack << "\n";
         cout << "Defense: " << defense << "\n";
@@ -51,15 +59,19 @@ Character createCharacter() {
     switch (classChoice) {
         case 0:
             character.characterClass = CharacterClass::WARRIOR;
+            character.attackType = AttackType::STANDARD;
             break;
         case 1:
             character.characterClass = CharacterClass::ROGUE;
+            character.attackType = AttackType::STANDARD;
             break;
         case 2:
             character.characterClass = CharacterClass::RANGER;
+            character.attackType = AttackType::RANGED;
             break;
         case 3:
             character.characterClass = CharacterClass::MAGE;
+            character.attackType = AttackType::RANGED;
             break;
         //add more classes as needed
         default:
@@ -69,8 +81,15 @@ Character createCharacter() {
     srand(static_cast<unsigned>(time(0))); // seed the random number generator
 
     character.health = rand() % 11 + 30; // random number between 30 and 40
-    character.attack = rand() % 7 + 12;   // random number between 12 and 18
     character.defense = rand() % 8 + 8;   // random number between 8 and 15
+
+    //set attack based on class
+    if (character.characterClass == CharacterClass::RANGER || character.characterClass == CharacterClass::MAGE) {
+        character.attack = rand() % 5 + 8; // random number between 8 and 12
+    } else {
+        //standard attack for warriors and rogues
+        character.attack = rand() % 7 + 12; // random number between 12 and 18
+    }
 
     return character;
 }
@@ -80,6 +99,34 @@ bool askUserIfLiked(const std::string& characterName) {
     cout << "Do you like the character " << characterName << "? (y/n): ";
     cin >> response;
     return (response == 'y' || response == 'Y');
+}
+
+void displayCharacterDetails(const Character& character) {
+    std::cout << "Name: " << character.name << "\n";
+    std::cout << "Health: " << character.health << "\n";
+    std::cout << "Attack: " << character.attack << "\n";
+    std::cout << "Defense: " << character.defense << "\n";
+    std::cout << "\n";
+
+    // Display the character's class
+    std::string className;
+    switch (character.characterClass) {
+        case CharacterClass::WARRIOR:
+            className = "Warrior";
+            break;
+        case CharacterClass::ROGUE:
+            className = "Rogue";
+            break;
+        case CharacterClass::RANGER:
+            className = "Ranger";
+            break;
+        case CharacterClass::MAGE:
+            className = "Mage";
+            break;
+    }
+    std::cout << "Class: " << className << "\n";
+
+    std::cout << "\n";
 }
 
 int main() {
@@ -92,12 +139,8 @@ int main() {
         while (!userLikesCharacter) {
             newCharacter = createCharacter();
 
-            std::cout << "Character " << i + 1 << " created:\n";
-            std::cout << "Name: " << newCharacter.name << "\n";
-            std::cout << "Health: " << newCharacter.health << "\n";
-            std::cout << "Attack: " << newCharacter.attack << "\n";
-            std::cout << "Defense: " << newCharacter.defense << "\n";
-            std::cout << "\n";
+            // create a function to display character details
+            displayCharacterDetails(newCharacter);
 
             userLikesCharacter = askUserIfLiked(newCharacter.name);
         }
