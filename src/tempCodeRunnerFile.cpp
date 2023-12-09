@@ -35,7 +35,7 @@ struct Character {
     Character() : health(0), attack(0), defense(0), level(1), experience(0) {}
 
     // function to display character information
-    void displayInfo() const {
+    void displayInfo() {
         cout << "Name: " << name << "\n";
         cout << "Class: " << static_cast<int>(characterClass) << "\n";
         cout << "Attack Type: " << static_cast<int>(attackType) << "\n";
@@ -129,35 +129,22 @@ void displayCharacterDetails(const Character& character) {
     std::cout << "\n";
 }
 
-Character createAndValidateCharacter() {
-    Character newCharacter;
-    bool userLikesCharacter = false;
-
-    while (!userLikesCharacter) {
-        newCharacter = createCharacter();
-
-        // create a function to display character details
-        displayCharacterDetails(newCharacter);
-
-        userLikesCharacter = askUserIfLiked(newCharacter.name);
-    }
-
-    return newCharacter;
-}
-
-void displayAllCharacters(const std::vector<Character>& characters) {
-    cout << "All characters created:\n";
-    for (size_t i = 0; i < characters.size(); i++) {
-        cout << "Character " << i + 1 << ":\n";
-        characters[i].displayInfo();
-    }
-}
-
 int main() {
     std::vector<Character> characters;
 
     for (int i = 0; i < 3; i++) {
-        Character newCharacter = createAndValidateCharacter();
+        Character newCharacter;
+        bool userLikesCharacter = false;
+
+        while (!userLikesCharacter) {
+            newCharacter = createCharacter();
+
+            // create a function to display character details
+            displayCharacterDetails(newCharacter);
+
+            userLikesCharacter = askUserIfLiked(newCharacter.name);
+        }
+
         characters.push_back(newCharacter);
     }
 
